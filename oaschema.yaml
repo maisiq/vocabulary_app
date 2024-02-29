@@ -1,0 +1,81 @@
+openapi: '3.1.0'
+
+info:
+  title: 'voca API'
+  description: 'Your API for Vocabulary App'
+
+paths:
+# parameters: cookie -> JWT -> user_id -> DB_words_by_user_id
+  /:
+    get:
+      summary: 'returns All words [for specific user]'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WordBaseSchema'
+    post:
+      summary: 'Add word to lib'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WordBaseSchema'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+components:
+  schemas:
+    WordBaseSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        translation_ru:
+          type: array
+          items:
+            type: object
+            properties:
+              partOfSpeech:
+                $ref: '#/components/schemas/partOfSpeech'
+              translation:
+                type: string
+    WordCreateSchema:
+      $ref: '#/components/schemas/WordBaseSchema'
+      required:
+        - name
+        - translation_ru
+    WordGetSchema:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              
+    partOfSpeech:
+      type: string
+      enum:
+        - verb
+        - prep
+        - noun
+        - adj
+        - pronoun
+        - adverb
+        - conjuction
+        - interjection
+
+servers:
+
+security:
