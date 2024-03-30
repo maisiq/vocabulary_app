@@ -11,6 +11,16 @@ uvicorn = "*"
 pyyaml = "*"
 sqlalchemy = "*"
 psycopg = "*"
+alembic = "*"
+passlib = "*"
+jose = "*"
+pyjwt = "*"
+python-jose = "*"
+python-multipart = "*"
+cryptography = "*"
+pytest = "*"
+pytest-asyncio = "*"
+httpx = "*"
 
 [dev-packages]
 
@@ -18,4 +28,5 @@ psycopg = "*"
 python_version = "3.10"
 
 [scripts]
-server = "uvicorn voca.app:app --reload"
+# migration = "alembic upgrade head"
+server = "uvicorn src.main:app --reload"
