@@ -1,0 +1,6 @@
+import os
+
+
+SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+ALGORITM = 'HS256'
+ACCES_TOKEN_EXPIRE_MINUTES = 30
