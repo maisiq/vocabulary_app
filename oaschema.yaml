@@ -5,10 +5,20 @@ info:
   description: 'Your API for Vocabulary App'
 
 paths:
-# parameters: cookie -> JWT -> user_id -> DB_words_by_user_id
-  /:
+
+  /words:
     get:
-      summary: 'returns All words [for specific user]'
+      parameters:
+        - name: perPage
+          in: query
+          required: false
+          default: 30
+        - name: page
+          in: query
+          required: false
+          default: 1
+
+      summary: 'Returns all words with pagination'
       responses:
         '200':
           content:
@@ -17,7 +27,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WordBaseSchema'
+
     post:
+      tags:
+        - manage
       summary: 'Add word to lib'
       requestBody:
         required: true
@@ -34,6 +47,126 @@ paths:
                 properties:
                   status:
                     type: string
+
+  
+  /words/{word}/:
+    parameters:
+      - $ref: '#/components/parameters/WordParam'
+    get:
+      summary: 'Returns the word with all translations in russian'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordBaseSchema'
+
+    post:
+      summary: 'Adds translation'
+      tags:
+        - manage
+    patch:
+      tags:
+        - manage
+      summary: 'Partial update for the word. Change word or transcription'
+
+  /words/{word}/{translationId}:
+    parameters:
+      - name: translationId
+        in: path
+        required: false
+        schema:
+          type: string
+          format: uuid
+    delete:
+      tags:
+        - manage
+      summary: 'Deletes translation'
+
+  /words/{word}/text:
+    post:
+      tags:
+        - manage
+      summary: 'Adds text example of usage'
+
+  /words/{word}/{textUsageId}:
+    put:
+      tags:
+        - manage
+      summary: 'Updates text example of usage'
+    delete:
+      tags:
+        - manage
+      summary: 'Deletes text example of usage'
+
+  /words/{word}/image:
+    post:
+      tags:
+        - manage
+      summary: 'Adds example of usage as image'
+
+  /words/{word}/{imgUsageId}:
+    # put:
+    #   tags:
+    #     - manage
+    #   summary: 'Updates example of usage as image'
+    delete:
+      tags:
+        - manage
+      summary: 'Deletes example of usage as image'
+    
+
+# parameters: cookie -> JWT -> user_id -> DB_words_by_user_id
+  /vocabulary:
+    get:
+      parameters:
+        - name: status
+          in: query
+          required: false
+          default: 'new'
+      summary: 'returns All words [for specific user]'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WordBaseSchema'
+
+  /vocabulary/{word}/{lang}:
+    parameters:
+      - name: word
+        in: path
+        required: true
+        schema:
+          type: string
+      # - name: user_id
+      #   in: path
+      #   required: true
+      #   schema:
+      #     type: string
+      #     format: uuid
+      - name: lang
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+            - ru
+    post:
+      tags:
+        - user's action
+      summary: 'Adds the word to vocabulary'
+    patch:
+      tags:
+        - user's action
+      summary: 'Updates the word''s status'
+    delete:
+      tags:
+        - user's action
+      summary: 'Deletes the word from vocabulary'
+
 
 components:
   schemas:
@@ -75,6 +208,13 @@ components:
         - adverb
         - conjuction
         - interjection
+  parameters:
+    WordParam:
+        name: word
+        in: path
+        required: true
+        schema:
+          type: string
 
 servers:
 
