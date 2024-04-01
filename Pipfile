@@ -19,8 +19,11 @@ python-jose = "*"
 python-multipart = "*"
 cryptography = "*"
 pytest = "*"
-pytest-asyncio = "*"
+async-asgi-testclient = "*"
 httpx = "*"
+anyio = "*"
+pytest-asyncio = "*"
+aiohttp = "*"
 
 [dev-packages]
 
@@ -29,4 +32,4 @@ python_version = "3.10"
 
 [scripts]
 # migration = "alembic upgrade head"
-server = "uvicorn src.main:app --reload"
+server = "uvicorn src.run:app --reload"

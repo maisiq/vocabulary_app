@@ -2,3 +2,4 @@
 *.pem
 .vscode
 __pycache__/
+db_*.sql

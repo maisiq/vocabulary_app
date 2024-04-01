@@ -1,0 +1,1 @@
+alembic upgrade head && uvicorn src.run:app --reload

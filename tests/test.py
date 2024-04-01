@@ -1,10 +1,20 @@
+
+import aiohttp
+import pytest_asyncio
+
+from contextlib import ExitStack
+
+
 import pytest
-from httpx import AsyncClient
-
-from fastapi.testclient import TestClient
-
-from src.words.routes.words import words
-from src.main import app
+from async_asgi_testclient import TestClient
 
 
-client = TestClient(app)
+# pytestmark = pytest.mark.anyio
+
+
+@pytest.mark.asyncio
+async def test_get_words(client: TestClient):
+    resp = await client.get('/')
+    assert resp.status_code == 404
+    assert resp.json() == {"detail":"Not Found"}
+    
