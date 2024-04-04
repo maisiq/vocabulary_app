@@ -3,7 +3,8 @@ from contextlib import ExitStack
 
 import pytest
 
-from fastapi.testclient import TestClient as FastTestClient
+# from fastapi.testclient import TestClient as FastTestClient
+from async_asgi_testclient import TestClient as AsyncTestClient
 
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
@@ -24,7 +25,7 @@ def app():
 
 @pytest.fixture
 async def client(app):
-    with FastTestClient(app) as client:
+    async with AsyncTestClient(app) as client:
         yield client
 
 

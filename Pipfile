@@ -20,11 +20,14 @@ python-multipart = "*"
 cryptography = "*"
 pytest = "*"
 async-asgi-testclient = "*"
-aiohttp = "*"
 pytest-postgresql = "*"
 anyio = "*"
 httpx = "*"
 pytest-asyncio = "*"
+aiomysql = "*"
+mysqlclient = "*"
+pymysql = "*"
+pytest-mysql = "*"
 
 [dev-packages]
 

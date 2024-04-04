@@ -3,3 +3,5 @@
 .vscode
 __pycache__/
 db_*.sql
+.pytest_cache/
+migrations/versions/*
