@@ -20,10 +20,10 @@ class Translation(Base):
     __tablename__ = 'translation'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    translation: Mapped[str]
+    translation: Mapped[str] = mapped_column(String(length=256))
     part_of_speech: Mapped['PartOfSpeech']
-    wordname: Mapped[str] = mapped_column(ForeignKey('words.word', ondelete='CASCADE'))
-    word: Mapped['Word'] = relationship(back_populates='translations')
+    wordname: Mapped[str] = mapped_column(String(length=256), ForeignKey('words.word', ondelete='CASCADE'))
+    word: Mapped['Word'] = relationship(back_populates='translations', lazy='selectin')
     language: Mapped[Language]
 
     __table_args__ = (
@@ -35,6 +35,6 @@ class Word(Base):
     __tablename__= 'words'
 
     id: Mapped[uuid_pk]
-    word: Mapped[str] = mapped_column(unique=True)
-    translations: Mapped[list['Translation']] = relationship(back_populates='word')
+    word: Mapped[str] = mapped_column(String(length=256), unique=True)
+    translations: Mapped[list['Translation']] = relationship(back_populates='word', lazy='selectin')
     transcription: Mapped[str] = mapped_column(String(length=156))

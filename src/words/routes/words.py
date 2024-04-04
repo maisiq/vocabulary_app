@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Response, Security, Query, UploadFile, s
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from src.config.db_config import get_session
@@ -25,7 +26,7 @@ router = APIRouter()
 async def words(
     per_page: int = Query(default=30, alias='perPage'),
     page: int = 1,
-    session: Session = Depends(get_session)
+    session: AsyncSession = Depends(get_session)
 ):
     ''' Returns all words in DB separated by page '''
 
@@ -34,7 +35,7 @@ async def words(
 
 
 @router.get('/words/{word}')
-async def get_word(word: str, session: Session = Depends(get_session)):
+async def get_word(word: str, session: AsyncSession = Depends(get_session)):
     service = WordService(session)
     word_obj = await service.get_word_by_name(word)
 
@@ -47,7 +48,7 @@ async def get_word(word: str, session: Session = Depends(get_session)):
 
 
 @router.post('/words')
-async def add_word(word_: CreateWordRequest, session: Session = Depends(get_session)):
+async def add_word(word_: CreateWordRequest, session: AsyncSession = Depends(get_session)):
     ''' Adds a new word to the storage '''
     service = WordService(session)
     result = await service.add_word(word_)
@@ -65,7 +66,7 @@ async def add_translation_to_word(
     word: str,
     lang: str,
     translations: list[TranslationDTO],
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     # user: dict = Security(get_current_user, scopes=['admin:update'])
 ):
     '''Adds translation to the word'''
@@ -83,7 +84,7 @@ async def add_translation_to_word(
 async def update_word(
     word: str,
     transcription: str,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
     # user: dict = Security(get_current_user, scopes=['admin:update'])
 ):
     ''' Change word or transcription '''
