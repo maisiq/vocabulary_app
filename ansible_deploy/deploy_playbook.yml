@@ -1,0 +1,29 @@
+- name: Deploy app
+  hosts: app
+  vars:
+    site_folder: /var/www/$USER/data/www/maisiq.ru
+    source_folder: '{{ site_folder }}/source'
+  tasks:
+    - name: Create app folder
+      command: mkdir -p '{{ source_folder }}'
+
+    - name: Copy requirements to the server
+      copy: 
+        src: ./requirements.txt
+        dest: '{{ site_folder }}/requirements.txt'
+
+    - name: Install dependencies
+      pip:
+        requirements: '{{ site_folder }}/requirements.txt'
+        virtualenv: '{{ site_folder }}/venv'
+        virtualenv_command: /opt/python/python-3.10.1/bin/python -m venv venv
+
+    - name: Clone project
+      git:
+        repo: https://github.com/maisiq/vocabulary_app.git
+        dest: '{{ source_folder }}'
+    
+    - name: Start server
+      command: 
+        cmd: '{{ site_folder}}/venv/bin/python3.10 uvicorn src.run:app --reload --host=0.0.0.0'
+        chdir: '{{ source_folder }}'

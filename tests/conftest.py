@@ -1,11 +1,14 @@
 import asyncio
 from contextlib import ExitStack
-import os
 
 import pytest
-from pytest_mysql import factories
+
+# from fastapi.testclient import TestClient as FastTestClient
+from async_asgi_testclient import TestClient as AsyncTestClient
+
+from pytest_postgresql import factories
+from pytest_postgresql.janitor import DatabaseJanitor
 from sqlalchemy import text
-from async_asgi_testclient import TestClient
 
 from src.main import init_app
 from src.config.db_config import sessionmanager, get_session, TestDbConfig
@@ -22,33 +25,37 @@ def app():
 
 @pytest.fixture
 async def client(app):
-    async with TestClient(app) as client:
+    async with AsyncTestClient(app) as client:
         yield client
 
 
 # default event_loop fixture is function scope
 @pytest.fixture(scope="session")
 def event_loop(request):
-    try:
-        # set new policy if OS == Windows else pass
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    except AttributeError:
-        pass
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     loop = asyncio.get_event_loop_policy().get_event_loop()
     yield loop
     loop.close()
 
 
-test_db = factories.mysql_noproc(port=3306, user='root', host='localhost')
+test_db = factories.postgresql_noproc(**TestDbConfig().model_dump())
 
 
 @pytest.fixture(scope="function", autouse=True)
 async def connection_test(test_db, event_loop):
-    connection_str = os.environ.get('MYSQLDB_URI', None)
+    pg_host = test_db.host
+    pg_port = test_db.port
+    pg_user = test_db.user
+    pg_db = test_db.dbname
+    pg_password = test_db.password
 
-    sessionmanager.init(connection_str)
-    yield
-    await sessionmanager.close()
+    with DatabaseJanitor(
+        user=pg_user, host=pg_host, port=pg_port, dbname=pg_db, version=test_db.version, password=pg_password
+    ):
+        connection_str = f"postgresql+psycopg://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}"
+        sessionmanager.init(connection_str)
+        yield
+        await sessionmanager.close()
 
 
 @pytest.fixture(scope="function", autouse=True)

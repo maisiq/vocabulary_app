@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  ansible:
+    build: .
+    volumes:
+      - ./:/srv
+    env_file:
+      - ./.env-ansible
+    tty: true
+    # command: ansible-playbook -i inventory.ini deploy_playbook.yml 

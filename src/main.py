@@ -16,7 +16,7 @@ def init_app(init_db=True):
      lifespan = None
 
      if init_db:
-          sessionmanager.init(os.environ.get('MYSQLDB_URI', None))
+          sessionmanager.init(os.environ.get('DB_URI', None))
 
           @asynccontextmanager
           async def lifespan(app: FastAPI):

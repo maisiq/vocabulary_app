@@ -14,8 +14,7 @@ config = context.config
 load_dotenv()
 
 
-# config.set_main_option("DB_URI", os.environ["DB_URI"])
-config.set_main_option("DB_URI", os.environ["MYSQLDB_URI_SYNC"])
+config.set_main_option("DB_URI", os.environ["DB_URI"])
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
